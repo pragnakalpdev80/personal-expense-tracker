@@ -26,7 +26,6 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, null=True)
-    # profile_picture = models.ImageField(upload_to='media/profile_picture/')
     is_staff = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
@@ -34,7 +33,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = "email"
-    # REQUIRED_FIELDS = ["email"]
 
     class Meta:
         verbose_name = "User"

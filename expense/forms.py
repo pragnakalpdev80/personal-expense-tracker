@@ -16,7 +16,7 @@ class CustomUserCreationForm(UserCreationForm):
         user = super(CustomUserCreationForm, self).save(commit=False)
         user.username = self.cleaned_data['email'] 
         user.email = self.cleaned_data['email']
-        user.is_active = False 
+        user.is_active = True 
         if commit:
             user.save()
         return user
