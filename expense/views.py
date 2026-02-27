@@ -2,11 +2,12 @@ from django.contrib import messages
 from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views import generic, View
-from .forms import CustomUserCreationForm, LoginForm
-
+from .forms import CustomUserCreationForm
+from django.contrib.auth import get_user_model
+User = get_user_model()
 # Create your models here.
 class RegistrationView(View):
     def get(self, request):
@@ -20,28 +21,10 @@ class RegistrationView(View):
         if form.is_valid():
             form.save()
             return redirect('/expense/login/')        
-        messages.info(request, "Account created Successfully!")
+        # messages.info(request, "Account created Successfully!")
         
 class LoginView(LoginView):
     template_name = 'expense/login.html'
-    def get(self, request):
-        form= AuthenticationForm()
-        return render(request, self.template_name, { 'form': form})
-
-    def post(self, request):
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            user = authenticate(request, username=email, password=password)
-            print(user)
-            if user is None:
-                messages.error(request,"Email or Password not matched")
-                return redirect('/expense/login/')
-            login(request,user)
-            return redirect("/expense/dashboard")
-        else:
-            messages.error(request, "SOmething is wrong!")
 
 class LogoutView(View):
     def post(self,request):
