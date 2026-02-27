@@ -5,7 +5,11 @@
   {{ form }}
   <button type="submit">Log In</button>
 </form>
-
+{% if messages %}
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
+{% endif %}
 <p>
     <a href="{% url 'expense:register' %}">Register</a>
 </p>

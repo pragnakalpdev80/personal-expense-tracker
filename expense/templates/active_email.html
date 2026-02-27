@@ -1,0 +1,5 @@
+{% autoescape off %}
+Hi {{ user.email }},
+Please verify your email by clicking on the following link.
+Confirmation Link: http://{{ domain }}{% url 'expense:activate' uidb64=uid token=token %} 
+{% endautoescape %}

@@ -1,5 +1,7 @@
-<p>Hello</p>
+{% if user.is_authenticated %}
+<p>Hello, {{user.email}} </p> 
 <form action="{% url 'expense:logout' %}" method="post">
   {% csrf_token %}
   <button type="submit">Log Out</button>
 </form>
+{% endif %}

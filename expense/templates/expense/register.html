@@ -6,6 +6,11 @@
 	{{ form.as_p }}		
 	<input type="submit" value="Register" />
 </form>
+{% if messages %}
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
+{% endif %}
 	<p>
         <a href="{% url 'expense:login' %}">Login</a>
     </p>
