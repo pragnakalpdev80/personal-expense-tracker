@@ -15,7 +15,7 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.views import generic, View
 from django.core.mail import EmailMessage
 from .forms import CustomUserCreationForm, ProfileForm
-from .models import User, Profile
+from .models import User, Profile, Category
 # Create your models here.
 class RegistrationView(View):
     def get(self, request):
@@ -123,3 +123,13 @@ class ProfileView(View):
         if form.is_valid():
             form.save()
             return redirect('expense:dashboard')
+        
+class CategoryView(View):
+    template_name = 'expense/category.html'
+    
+    def get(self,request):
+        
+        pass
+
+    def post(self, request):    
+        pass

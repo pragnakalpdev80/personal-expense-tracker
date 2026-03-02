@@ -47,3 +47,29 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.email
+
+class Category(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
+# class Expense(models.Model):
+#     TRANSACTION_MEDIUM = [
+#         ("UPI", "UPI"),
+#         ("Credit Card", "Credit Card"),
+#         ("Net Banking", "Net Banking"),
+#         ("Cash", "Cash"),
+#         ("Other", "Other"),
+#     ]
+#     amount = models.DecimalField(max_digits=10,decimal_places=2)
+#     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+#     transaction_medium = models.CharField(choices=TRANSACTION_MEDIUM)
+#     date = models.DateField(default=datetime.date.today())
+#     notes = models.TextField()
