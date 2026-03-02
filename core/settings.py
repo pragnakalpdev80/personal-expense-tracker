@@ -130,3 +130,6 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('GMAIL')
 EMAIL_HOST_PASSWORD = os.getenv('PASSWORD')
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

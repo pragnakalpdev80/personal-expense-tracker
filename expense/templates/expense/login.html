@@ -5,6 +5,7 @@
   {{ form }}
   <button type="submit">Log In</button>
 </form>
+<a href="{% url 'expense:password_reset' %}"><i>Forgot Password?</i></a>
 {% if messages %}
   {% for message in messages %}
     {{ message }}

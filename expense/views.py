@@ -1,6 +1,9 @@
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 from django.contrib import messages
-from django.contrib.auth.views import LoginView,LogoutView
+from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.views.generic.edit import FormView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.shortcuts import get_current_site
@@ -11,7 +14,7 @@ from .tokens import generate_token
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views import generic, View
 from django.core.mail import EmailMessage
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm,SetPasswordForm
 from .models import User
 # Create your models here.
 class RegistrationView(View):
@@ -29,7 +32,7 @@ class RegistrationView(View):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            mail_subject = 'Activate your Expense Tracker account.'
+            mail_subject = 'Activate your Expense Tracker account'
             message = render_to_string('active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
@@ -58,7 +61,8 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, "User Verified")
-        return redirect('/expense/login/')
+        login(request, user)
+        return redirect('/expense/dashboard/')
     else:
         return HttpResponse('Activation link is invalid!')
             
@@ -70,6 +74,25 @@ class LogoutView(View):
         if request.user.is_authenticated:
             logout(request)
             return redirect('/expense/login/')
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'expense/password_reset.html'
+    email_template_name = 'password_reset_email.html'
+    subject_template_name = 'password_reset_subject.txt'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('expense:login')
+
+class ResetPasswordDoneView(PasswordResetDoneView):
+    template_name='password_reset_done.html'
+
+class ResetPasswordConfirmView(PasswordResetConfirmView):
+    template_name='password_reset_confirm.html'
+
+class ResetPasswordCompleteView(PasswordResetCompleteView):
+    template_name='password_reset_complete.html'
 
 class DashboardView(View):
     template_name = 'expense/dashboard.html'
