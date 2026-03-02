@@ -1,0 +1,20 @@
+{% block content %}
+<header style="background-color: aqua;">
+<img  src="{{ user.profile.profile_photo.url }}" alt="Image" height="50px" width="50px">
+<h4 >{{user.profile.name}} </h4> 
+</header>
+<form method="POST" enctype="multipart/form-data"   >
+	{% csrf_token %}
+	<h2>Profile Update</h2>
+	{{ form.as_p }}		
+	<input type="submit" value="Update" />
+</form>
+{% if messages %}
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
+{% endif %}
+	<p>
+        <a href="{% url 'expense:dashboard' %}">dashbaord</a>
+    </p>
+{% endblock content%}

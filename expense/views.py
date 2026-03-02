@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,PasswordResetCompleteView, PasswordChangeView
 from django.views.generic.edit import FormView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import authenticate,login,logout
@@ -14,8 +14,8 @@ from .tokens import generate_token
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views import generic, View
 from django.core.mail import EmailMessage
-from .forms import CustomUserCreationForm,SetPasswordForm
-from .models import User
+from .forms import CustomUserCreationForm, ProfileForm
+from .models import User, Profile
 # Create your models here.
 class RegistrationView(View):
     def get(self, request):
@@ -27,10 +27,10 @@ class RegistrationView(View):
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            print("Hello")
             user = form.save(commit=False)
             user.is_active = False
             user.save()
+            Profile.objects.create(user=user)
             current_site = get_current_site(request)
             mail_subject = 'Activate your Expense Tracker account'
             message = render_to_string('active_email.html', {
@@ -47,7 +47,6 @@ class RegistrationView(View):
             form.save()
             return redirect('/expense/login/')    
         else:   
-            print(" No Hello") 
             messages.error(request, "Email is wrong or Password not matched")
             return redirect('/expense/register/')
 
@@ -94,9 +93,33 @@ class ResetPasswordConfirmView(PasswordResetConfirmView):
 class ResetPasswordCompleteView(PasswordResetCompleteView):
     template_name='password_reset_complete.html'
 
+class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
+    template_name = 'expense/change_password.html'
+    success_message = "Successfully Changed Your Password"
+    success_url = reverse_lazy('expense:dashboard')
+
 class DashboardView(View):
+    model = Profile
     template_name = 'expense/dashboard.html'
+    context_object_name = 'profile'
     def get(self, request):
         if not request.user.is_authenticated:
             return redirect("/expense/login")
+        
         return render(request, self.template_name)
+
+    def get_object(self):
+        return Profile.objects.get(id=self.kwargs.get("id"))
+
+class ProfileView(View):
+    profile = Profile.objects.all()
+
+    def get(self, request):
+        form = ProfileForm(instance=request.user)
+        return render(request, 'expense/profile.html', { 'form': form, 'profile': request.user.profile})  
+    
+    def post(self, request):
+        form = ProfileForm(request.POST,request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('expense:dashboard')

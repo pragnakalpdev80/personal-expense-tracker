@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
-# from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from .models import Profile
 
 User = get_user_model()
 
@@ -20,7 +20,7 @@ class CustomUserCreationForm(UserCreationForm):
     #         user.save()
     #     return user
 
-class SetPasswordForm(SetPasswordForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
-        model = get_user_model()
-        fields = ['new_password1', 'new_password2']
+        model = Profile 
+        fields = ['profile_photo']
