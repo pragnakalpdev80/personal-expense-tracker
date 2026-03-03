@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth import get_user_model
-from .models import Profile
+from .models import Profile, Category
 
 User = get_user_model()
 
@@ -24,3 +24,8 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile 
         fields = ['profile_photo']
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']

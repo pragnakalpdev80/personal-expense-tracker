@@ -1,5 +1,94 @@
 {%block content%}
-<p>
+<header style="background-color: aqua;">
+<img  src="{{ user.profile.profile_photo.url }}" alt="Image" height="50px" width="50px">
+<h4 >{{user.profile.name}} </h4> 
+</header>
+
+<!-- <form method="POST" novalidate>
+	{% csrf_token %}
+	<h2>Add category</h2>
+	{{ form.as_p }}		
+	<input type="submit" value="Add" />
+</form>
+{% if messages %}
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
+{% endif %}
+{% endblock content%} -->
+
+<p>     
     <a href="{% url 'expense:dashboard' %}">Dashboard</a>
 </p>
-{%endblock content%}
+
+<h1>Category Management</h1>
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="confirm" value="confirm">
+    <button type="submit">Confirm Category</button>
+</form>
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<hr>
+
+<h2>Add New Category</h2>
+<form method="POST">
+    {% csrf_token %}
+    
+    <input type="hidden" name="action" value="create">
+    
+    <label>Category Name:</label>
+    <input type="text" name="name" required>
+    
+    <button type="submit">Create</button>
+</form>
+
+<hr>
+
+<h2>Your Categories</h2>
+<table>
+    <tr>
+        <th>Category Name</th>
+        <th>Actions</th>
+    </tr>
+    
+    {% for category in categories %}
+    <tr>
+        
+        <td>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update">
+                
+                <input type="hidden" name="category_id" value="{{ category.id }}">
+                
+                <input type="text" name="name" value="{{ category.name }}" required>
+                
+                <button type="submit">Update</button>
+            </form>
+        </td>
+        
+        <td>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="category_id" value="{{ category.id }}">
+                
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+        
+    </tr>
+    
+    {% empty %}
+    <tr>
+        <td colspan="2">No categories found. Please create one above.</td>
+    </tr>
+    {% endfor %}
+</table>

@@ -9,6 +9,7 @@ urlpatterns = [
     path("login/",views.LoginView.as_view(),name="login"),
     path("logout/",views.LogoutView.as_view(),name="logout"),
     path("dashboard/",views.DashboardView.as_view(),name="dashboard"),
+    path("category/",views.CategoryView.as_view(),name="category"),
     path("profile/",views.ProfileView.as_view(),name="profile"),
     path('activate/<uidb64>/<token>', views.activate, name='activate'),
     path('password-reset/', views.ResetPasswordView.as_view(), name='password_reset'),

@@ -9,7 +9,10 @@
   <button type="submit">Log Out</button>
 </form>
 <p>
-        <a href="{% url 'expense:profile' %}">Update Profile</a>
-    </p>
+  <a href="{% url 'expense:category' %}">Category</a>
+</p>
+<p>
+  <a href="{% url 'expense:profile' %}">Update Profile</a>
+</p>
 <a href="{% url 'expense:password_change' %}">Change Password</a>
 {% endif %}

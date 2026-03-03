@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,PasswordResetCompleteView, PasswordChangeView
 from django.views.generic.edit import FormView
+from django.views.generic import CreateView,UpdateView,DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -14,7 +15,7 @@ from .tokens import generate_token
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views import generic, View
 from django.core.mail import EmailMessage
-from .forms import CustomUserCreationForm, ProfileForm
+from .forms import CustomUserCreationForm, ProfileForm, CategoryForm
 from .models import User, Profile, Category
 # Create your models here.
 class RegistrationView(View):
@@ -126,10 +127,51 @@ class ProfileView(View):
         
 class CategoryView(View):
     template_name = 'expense/category.html'
-    
-    def get(self,request):
-        
-        pass
 
-    def post(self, request):    
-        pass
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('/expense/login/')
+            
+        categories = Category.objects.filter(user=request.user)
+        
+        return render(request, self.template_name, {'categories': categories})
+
+    def post(self, request):
+        action = request.POST.get('action')
+        confirm = request.POST.get('confirm')
+
+        if confirm:
+            user = get_object_or_404(Profile, user_id=request.user.id)
+            user.category_confirmed = True
+            user.save()
+
+        if action == 'create':
+            category_name = request.POST.get('name') 
+            
+            if category_name:
+                Category.objects.create(
+                    user=request.user, 
+                    name=category_name, 
+                    is_default=False
+                )
+                messages.success(request, "New category added!")
+
+        elif action == 'update':
+            category_id = request.POST.get('category_id')
+            new_name = request.POST.get('name')
+            
+            category = get_object_or_404(Category, id=category_id, user=request.user)
+            
+            if new_name:
+                category.name = new_name
+                category.save()
+                messages.success(request, "Category updated successfully!")
+
+        elif action == 'delete':
+            category_id = request.POST.get('category_id')
+            category = get_object_or_404(Category, id=category_id, user=request.user)
+            
+            category.delete()
+            messages.success(request, "Category deleted.")
+
+        return redirect('expense:category')
