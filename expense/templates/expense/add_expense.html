@@ -1,0 +1,13 @@
+<header style="background-color: aqua;">
+<img  src="{{ user.profile.profile_photo.url }}" alt="Image" height="50px" width="50px">
+<h4 >{{user.profile.name}} </h4> 
+</header>
+{% if user.profile.category_confirmed %}
+{% else %}
+<P>PLEASE CONFIRM CATEGORIES FIRST</P>
+{% endif %}
+<p>
+<a href="{% url 'expense:dashboard' %}">dashbaord</a>
+</p>
+
+

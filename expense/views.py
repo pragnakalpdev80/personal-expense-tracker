@@ -175,3 +175,13 @@ class CategoryView(View):
             messages.success(request, "Category deleted.")
 
         return redirect('expense:category')
+
+class AddExpenseView(View):
+    template_name = 'expense/add_expense.html'
+    # profile = Profile.objects.all()
+    def get(self, request):
+        # if not request.user.is_authenticated:
+        #     return redirect('/expense/login/')
+        user = get_object_or_404(Profile, user_id=request.user.id)
+        
+        return render(request, self.template_name,{'profile': request.user.profile})

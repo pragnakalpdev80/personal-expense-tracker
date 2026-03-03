@@ -60,16 +60,18 @@ class Category(models.Model):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
-# class Expense(models.Model):
-#     TRANSACTION_MEDIUM = [
-#         ("UPI", "UPI"),
-#         ("Credit Card", "Credit Card"),
-#         ("Net Banking", "Net Banking"),
-#         ("Cash", "Cash"),
-#         ("Other", "Other"),
-#     ]
-#     amount = models.DecimalField(max_digits=10,decimal_places=2)
-#     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-#     transaction_medium = models.CharField(choices=TRANSACTION_MEDIUM)
-#     date = models.DateField(default=datetime.date.today())
-#     notes = models.TextField()
+class Expense(models.Model):
+    TRANSACTION_MEDIUM = [
+        ("UPI", "UPI"),
+        ("Credit Card", "Credit Card"),
+        ("Net Banking", "Net Banking"),
+        ("Cash", "Cash"),
+        ("Other", "Other"),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10,decimal_places=2)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    transaction_medium = models.CharField(choices=TRANSACTION_MEDIUM)
+    date = models.DateField(auto_now_add=True)
+    notes = models.TextField()
+    modified = models.DateTimeField(auto_now=True)
