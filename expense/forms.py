@@ -1,9 +1,15 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth import get_user_model
-from .models import Profile, Category
+from django.db.models import Q
+from .models import Profile, Category, Expense
+# from django.contrib.admin import widgets                                       
+
 
 User = get_user_model()
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -29,3 +35,15 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name']
+
+class ExpenseForm(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = ['amount', 'category', 'transaction_medium', 'date', 'notes']
+        widgets = {
+            'date': DateInput()
+        }
+
+    def __init__(self, user, *args, **kwargs):
+        super(ExpenseForm, self).__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.filter(Q(user=user) | Q(is_default=True))

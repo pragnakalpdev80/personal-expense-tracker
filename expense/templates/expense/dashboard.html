@@ -4,10 +4,30 @@
 <h4 >{{user.profile.name}} </h4> 
 </header>
 <p>Hello, {{user.email}} </p> 
+
 <form action="{% url 'expense:logout' %}" method="post">
   {% csrf_token %}
   <button type="submit">Log Out</button>
 </form>
+<P> {{current_month_name}}'s Total Expense</P>
+
+<table border="1px">
+    <tr>
+        <th>Category</th>
+        <th>Total</th>
+    </tr>
+    {% for category_total in category_totals %}
+    <tr>
+        <td>{{ category_total.category__name }}</td>
+        <td>{{ category_total.total }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <th>Total</th>
+        <th>{{total_monthly}}</th>
+    </tr>
+</table>
+
 <p>
   <a href="{% url 'expense:category' %}">Category</a>
 </p>

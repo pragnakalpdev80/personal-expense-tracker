@@ -1,6 +1,8 @@
+import datetime
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.db.models import Sum    
 from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,PasswordResetCompleteView, PasswordChangeView
 from django.views.generic.edit import FormView
 from django.views.generic import CreateView,UpdateView,DeleteView
@@ -15,8 +17,8 @@ from .tokens import generate_token
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views import generic, View
 from django.core.mail import EmailMessage
-from .forms import CustomUserCreationForm, ProfileForm, CategoryForm
-from .models import User, Profile, Category
+from .forms import CustomUserCreationForm, ProfileForm, CategoryForm, ExpenseForm
+from .models import User, Profile, Category, Expense
 # Create your models here.
 class RegistrationView(View):
     def get(self, request):
@@ -107,7 +109,26 @@ class DashboardView(View):
         if not request.user.is_authenticated:
             return redirect("/expense/login")
         
-        return render(request, self.template_name)
+        today = datetime.date.today()
+        
+        monthly_expenses = Expense.objects.filter(
+            user=request.user,
+            date__month=today.month,
+            date__year=today.year
+        )
+
+        total_monthly = monthly_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+        category_totals = monthly_expenses.values('category__name').annotate(total=Sum('amount')).order_by('-total')
+        recent_transactions = Expense.objects.filter(user=request.user).order_by('-date')[:5]
+
+        context = {
+            'total_monthly': total_monthly,
+            'category_totals': category_totals,
+            'recent_transactions': recent_transactions,
+            'current_month_name': today.strftime("%B"),
+        }
+        print(context)
+        return render(request, self.template_name, context)
 
     def get_object(self):
         return Profile.objects.get(id=self.kwargs.get("id"))
@@ -178,10 +199,51 @@ class CategoryView(View):
 
 class AddExpenseView(View):
     template_name = 'expense/add_expense.html'
-    # profile = Profile.objects.all()
-    def get(self, request):
-        # if not request.user.is_authenticated:
-        #     return redirect('/expense/login/')
-        user = get_object_or_404(Profile, user_id=request.user.id)
+
+    def get_daily_context(self, user):
+        today = datetime.date.today()
+        todays_expenses = Expense.objects.filter(user=user, date=today)
         
-        return render(request, self.template_name,{'profile': request.user.profile})
+        total_today = todays_expenses.aggregate(Sum('amount'))['amount__sum']
+        
+        if total_today is None:
+            total_today = 0
+            
+        category_totals = todays_expenses.values('category__name').annotate(total=Sum('amount'))
+
+        return {
+            'todays_expenses': todays_expenses,
+            'total_today': total_today,
+            'category_totals': category_totals,
+        }
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('/expense/login/')
+            
+        if not request.user.profile.category_confirmed:
+            messages.error(request, "Please confirm your categories before adding expenses.")
+            return redirect('expense:category')
+        form = ExpenseForm(user=request.user)
+        context = self.get_daily_context(request.user)
+        context['form'] = form
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return redirect('/expense/login/')
+        
+        form = ExpenseForm(request.POST, user=request.user)
+        
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.user = request.user
+            expense.save()
+            
+            messages.success(request, "Expense added successfully!")
+            return redirect('expense:add_expense') 
+            
+        context = self.get_daily_context(request.user)
+        context['form'] = form
+        
+        return render(request, self.template_name, context)

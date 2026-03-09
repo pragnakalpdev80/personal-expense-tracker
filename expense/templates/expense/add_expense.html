@@ -7,7 +7,54 @@
 <P>PLEASE CONFIRM CATEGORIES FIRST</P>
 {% endif %}
 <p>
-<a href="{% url 'expense:dashboard' %}">dashbaord</a>
+<a href="{% url 'expense:dashboard' %}">Dashbaord</a>
 </p>
+<P> Today's Total Category Wise</P>
+<table border="1px">
+    <tr>
+        <th>Category</th>
+        <th>Total</th>
+    </tr>
+    {% for category_total in category_totals %}
+    <tr>
+        <td>{{ category_total.category__name }}</td>
+        <td>{{ category_total.total }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <th>Total</th>
+        <th>{{total_today}}</th>
+    </tr>
+</table>
+
+<P> Today's Expense</P>
+<table border="1px">
+        <tr>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Transaction medium</th>
+            <th>Notes</th>
+        </tr>
+        {% for expense in todays_expenses %}
+        <tr>
+            <td>{{ expense.amount}} </td>
+            <td>{{ expense.category}} </td>
+            <td>{{ expense.transaction_medium}} </td>
+            <td>{{ expense.notes}} </td>
+        </tr>
+        {% endfor %}
+    </table>
+<h2>Add New Expense</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form }}
+  <button type="submit">Add Expense</button>
+</form>
+{% if messages %}
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
+{% endif %}
+
 
 
