@@ -127,7 +127,6 @@ class DashboardView(View):
             'recent_transactions': recent_transactions,
             'current_month_name': today.strftime("%B"),
         }
-        print(context)
         return render(request, self.template_name, context)
 
     def get_object(self):
@@ -191,9 +190,14 @@ class CategoryView(View):
         elif action == 'delete':
             category_id = request.POST.get('category_id')
             category = get_object_or_404(Category, id=category_id, user=request.user)
-            
-            category.delete()
-            messages.success(request, "Category deleted.")
+            expense_exist = Expense.objects.filter(category_id=category_id)
+            if expense_exist:
+                print("Hello")
+                messages.error(request, f"Cannot Delete {category} category because expense with this category already exists.")
+            else:
+                print("Bye")
+                category.delete()
+                messages.success(request, "Category deleted.")
 
         return redirect('expense:category')
 
