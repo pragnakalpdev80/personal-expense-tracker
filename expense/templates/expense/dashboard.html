@@ -27,6 +27,25 @@
         <th>{{total_monthly}}</th>
     </tr>
 </table>
+<P> Recent Transaction</P>
+<table border="1px">
+        <tr>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Transaction Medium</th>
+            <th>Date</th>
+            <th>Notes</th>
+        </tr>
+        {% for expense in recent_transactions %}
+        <tr>
+            <td>{{ expense.amount}} </td>
+            <td>{{ expense.category}} </td>
+            <td>{{ expense.transaction_medium}} </td>
+            <td>{{ expense.date}} </td>
+            <td>{{ expense.notes}} </td>
+        </tr>
+        {% endfor %}
+    </table>
 
 <p>
   <a href="{% url 'expense:category' %}">Category</a>

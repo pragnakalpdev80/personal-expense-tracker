@@ -233,7 +233,7 @@ class AddExpenseView(View):
         if not request.user.is_authenticated:
             return redirect('/expense/login/')
         
-        form = ExpenseForm(request.POST, user=request.user)
+        form = ExpenseForm(request.user, request.POST)
         
         if form.is_valid():
             expense = form.save(commit=False)
