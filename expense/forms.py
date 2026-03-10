@@ -1,9 +1,9 @@
+import datetime
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from .models import Profile, Category, Expense
-# from django.contrib.admin import widgets                                       
 
 
 User = get_user_model()
@@ -47,3 +47,14 @@ class ExpenseForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(ExpenseForm, self).__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.filter(Q(user=user) | Q(is_default=True))
+
+    def clean(self):
+        cleaned_data = super().clean()  
+        amount = cleaned_data.get('amount')
+        date = cleaned_data.get('date')
+    
+        if amount <= 0:
+            raise forms.ValidationError("Amount must be postive.")
+        
+        if date > datetime.date.today():
+            raise forms.ValidationError("Date cannot be future date.")

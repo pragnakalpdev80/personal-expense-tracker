@@ -73,8 +73,8 @@ class Expense(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     transaction_medium = models.CharField(choices=TRANSACTION_MEDIUM)
     date = models.DateField(default=datetime.date.today)
-    notes = models.TextField()
+    notes = models.TextField(blank=True)
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.notes
+        return f"{self.category.name} - {self.amount}"

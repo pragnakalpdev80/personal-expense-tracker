@@ -29,23 +29,27 @@
 </table>
 <P> Recent Transaction</P>
 <table border="1px">
-        <tr>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Transaction Medium</th>
-            <th>Date</th>
-            <th>Notes</th>
-        </tr>
-        {% for expense in recent_transactions %}
-        <tr>
-            <td>{{ expense.amount}} </td>
-            <td>{{ expense.category}} </td>
-            <td>{{ expense.transaction_medium}} </td>
-            <td>{{ expense.date}} </td>
-            <td>{{ expense.notes}} </td>
-        </tr>
-        {% endfor %}
-    </table>
+    <tr>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Transaction Medium</th>
+        <th>Date</th>
+        <th>Notes</th>
+    </tr>
+    {% for expense in recent_transactions %}
+    <tr>
+        <td>{{expense.amount}} </td>
+        <td>{{expense.category}} </td>
+        <td>{{expense.transaction_medium}} </td>
+        <td>{{expense.date}} </td>
+        <td>{{expense.notes}} </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">No transactions found. Please create one.</td>
+    </tr>
+    {% endfor %}
+</table>
 
 <p>
   <a href="{% url 'expense:category' %}">Category</a>
@@ -55,6 +59,9 @@
 </p>
 <p>
   <a href="{% url 'expense:add_expense' %}">Add expense</a>
+</p>
+<p>     
+    <a href="{% url 'expense:all_expense' %}">View Expenses</a>
 </p>
 <a href="{% url 'expense:password_change' %}">Change Password</a>
 {% endif %}

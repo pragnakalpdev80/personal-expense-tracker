@@ -2,13 +2,10 @@ import datetime
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.db.models import Sum    
-from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,PasswordResetCompleteView, PasswordChangeView
-from django.views.generic.edit import FormView
-from django.views.generic import CreateView,UpdateView,DeleteView
+from django.db.models import Sum , Q  
+from django.contrib.auth.views import LoginView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,PasswordResetCompleteView, PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth import authenticate,login,logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login,logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -22,8 +19,8 @@ from .models import User, Profile, Category, Expense
 # Create your models here.
 class RegistrationView(View):
     def get(self, request):
-        # if request.user.is_authenticated:
-        #     return redirect("/expense/dashboard")
+        if request.user.is_authenticated:
+            return redirect("/expense/dashboard")
         form = CustomUserCreationForm()
         return render(request, 'expense/register.html', { 'form': form})  
     
@@ -119,7 +116,7 @@ class DashboardView(View):
 
         total_monthly = monthly_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
         category_totals = monthly_expenses.values('category__name').annotate(total=Sum('amount')).order_by('-total')
-        recent_transactions = Expense.objects.filter(user=request.user).order_by('-date')[:5]
+        recent_transactions = Expense.objects.filter(user=request.user).order_by('-date')
 
         context = {
             'total_monthly': total_monthly,
@@ -136,6 +133,9 @@ class ProfileView(View):
     profile = Profile.objects.all()
 
     def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect("/expense/login")
+        
         form = ProfileForm(instance=request.user)
         return render(request, 'expense/profile.html', { 'form': form, 'profile': request.user.profile})  
     
@@ -192,10 +192,8 @@ class CategoryView(View):
             category = get_object_or_404(Category, id=category_id, user=request.user)
             expense_exist = Expense.objects.filter(category_id=category_id)
             if expense_exist:
-                print("Hello")
                 messages.error(request, f"Cannot Delete {category} category because expense with this category already exists.")
             else:
-                print("Bye")
                 category.delete()
                 messages.success(request, "Category deleted.")
 
@@ -229,10 +227,10 @@ class AddExpenseView(View):
             messages.error(request, "Please confirm your categories before adding expenses.")
             return redirect('expense:category')
         form = ExpenseForm(user=request.user)
+        print(form)
         context = self.get_daily_context(request.user)
         context['form'] = form
         return render(request, self.template_name, context)
-
     def post(self, request):
         if not request.user.is_authenticated:
             return redirect('/expense/login/')
@@ -250,4 +248,37 @@ class AddExpenseView(View):
         context = self.get_daily_context(request.user)
         context['form'] = form
         
+        return render(request, self.template_name, context)
+    
+class ExpenseView(View):
+    template_name = 'expense/expenses.html'
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect("/expense/login")
+        categories =  Category.objects.filter(Q(user=request.user) | Q(is_default=True))
+        filtered_category  = request.GET.get("category")
+        filtered_transaction_medium  = request.GET.get("transaction_medium")
+        filtered_startdate = request.GET.get("startdate")
+        filtered_enddate = request.GET.get("enddate")
+
+        print(filtered_category)
+        print(filtered_transaction_medium)
+        print(filtered_startdate)
+        print(filtered_enddate)
+        
+        transactions = Expense.objects.filter(user=request.user).order_by('-date')
+        if filtered_category:
+            transactions = transactions.filter(category = filtered_category)
+        if filtered_transaction_medium:
+            transactions = transactions.filter(transaction_medium = filtered_transaction_medium)
+        if filtered_startdate:
+            transactions = transactions.filter(startdate = filtered_startdate)
+        if filtered_enddate:
+            transactions = transactions.filter(enddate = filtered_enddate)
+        print(transactions)
+        context = {
+            'transactions': transactions,
+            'categories' : categories,
+        }       
         return render(request, self.template_name, context)
