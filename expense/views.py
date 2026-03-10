@@ -273,9 +273,9 @@ class ExpenseView(View):
         if filtered_transaction_medium:
             transactions = transactions.filter(transaction_medium = filtered_transaction_medium)
         if filtered_startdate:
-            transactions = transactions.filter(startdate = filtered_startdate)
+            transactions = transactions.filter(date__gte = filtered_startdate)
         if filtered_enddate:
-            transactions = transactions.filter(enddate = filtered_enddate)
+            transactions = transactions.filter(date__lte = filtered_enddate)
         print(transactions)
         context = {
             'transactions': transactions,
