@@ -74,6 +74,7 @@ class LogoutView(View):
         if request.user.is_authenticated:
             logout(request)
             return redirect('/expense/login/')
+    
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'expense/password_reset.html'
@@ -273,6 +274,9 @@ class ExpenseView(View):
         filtered_startdate = request.GET.get("startdate")
         filtered_enddate = request.GET.get("enddate")
 
+        if filtered_enddate != None: 
+            if filtered_enddate < filtered_startdate:
+                messages.error(request,"please enter valid end date.")
     
         transactions = Expense.objects.filter(user=request.user).order_by('-date')   
         if filtered_category:
@@ -284,7 +288,7 @@ class ExpenseView(View):
         if filtered_enddate:
             transactions = transactions.filter(date__lte = filtered_enddate)
         
-        print(transactions)
+        # print(transactions)
         
         context = {
             'transactions': transactions,

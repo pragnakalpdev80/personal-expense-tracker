@@ -51,7 +51,7 @@ class ExpenseForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()  
         amount = cleaned_data.get('amount')
-        print(amount)
+        # print(amount)
         date = cleaned_data.get('date')
 
         if amount == None:
