@@ -51,10 +51,19 @@ class ExpenseForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()  
         amount = cleaned_data.get('amount')
+        print(amount)
         date = cleaned_data.get('date')
-    
+
+        if amount == None:
+            raise forms.ValidationError("Please enter a valid amount.")
+
         if amount <= 0:
             raise forms.ValidationError("Amount must be postive.")
         
+        if amount > 9999999999:
+            raise forms.ValidationError("Please enter amount less than 9999999999")
+        
         if date > datetime.date.today():
             raise forms.ValidationError("Date cannot be future date.")
+        
+        return cleaned_data

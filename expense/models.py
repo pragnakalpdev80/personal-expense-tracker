@@ -69,7 +69,7 @@ class Expense(models.Model):
         ("Other", "Other"),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10,decimal_places=2)
+    amount = models.DecimalField(max_digits=10 ,decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     transaction_medium = models.CharField(choices=TRANSACTION_MEDIUM)
     date = models.DateField(default=datetime.date.today)
@@ -77,4 +77,4 @@ class Expense(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.category.name} - {self.amount}"
+        return f"{self.category} - {self.amount} : {self.user}"

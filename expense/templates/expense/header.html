@@ -1,0 +1,20 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'header.css' %}">
+
+<header>
+<div class="topnav">
+    <div class="logo">
+    <img  src="{{ user.profile.profile_photo.url }}" alt="Image">
+        
+    </div>
+        <a href="{% url 'expense:dashboard' %}">Dashboard</a>
+        <a href="{% url 'expense:category' %}">Category</a>
+        <a href="{% url 'expense:profile' %}">Update Profile</a>
+        <a href="{% url 'expense:add_expense' %}">Add expense</a>  
+        <a href="{% url 'expense:all_expense' %}">View Expenses</a>
+        <a href="{% url 'expense:password_change' %}">Change Password</a>
+</div>
+
+</header>
+{%block content%}
+{% endblock content%}

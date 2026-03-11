@@ -1,25 +1,8 @@
+{% extends "expense/header.html" %}
 {%block content%}
-<header style="background-color: aqua;">
-<img  src="{{ user.profile.profile_photo.url }}" alt="Image" height="50px" width="50px">
-<h4 >{{user.profile.name}} </h4> 
-</header>
 
-<!-- <form method="POST" novalidate>
-	{% csrf_token %}
-	<h2>Add category</h2>
-	{{ form.as_p }}		
-	<input type="submit" value="Add" />
-</form>
-{% if messages %}
-  {% for message in messages %}
-    {{ message }}
-  {% endfor %}
-{% endif %}
-{% endblock content%} -->
-
-<p>     
-    <a href="{% url 'expense:dashboard' %}">Dashboard</a>
-</p>
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles.css' %}">
 
 <h1>Category Management</h1>
 <form method="POST">
@@ -92,3 +75,4 @@
     </tr>
     {% endfor %}
 </table>
+{% endblock content%}

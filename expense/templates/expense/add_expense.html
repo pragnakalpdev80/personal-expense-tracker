@@ -1,14 +1,12 @@
-<header style="background-color: aqua;">
-<img  src="{{ user.profile.profile_photo.url }}" alt="Image" height="50px" width="50px">
-<h4 >{{user.profile.name}} </h4> 
-</header>
+{% extends "expense/header.html" %}
+{%block content%}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'expense.css' %}">
 {% if user.profile.category_confirmed %}
 {% else %}
 <P>PLEASE CONFIRM CATEGORIES FIRST</P>
 {% endif %}
-<p>
-<a href="{% url 'expense:dashboard' %}">Dashbaord</a>
-</p>
 <P> Today's Total Category Wise</P>
 <table border="1px">
     <tr>
@@ -26,8 +24,9 @@
         <th>{{total_today}}</th>
     </tr>
 </table>
+<section>
 
-<P> Today's Expense</P>
+<div class="expense-table">
 <table border="1px">
         <tr>
             <th>Amount</th>
@@ -44,17 +43,23 @@
         </tr>
         {% endfor %}
     </table>
+</div>
+<div class="main">
 <h2>Add New Expense</h2>
-<form method="post">
+<form class="card" method="post">
   {% csrf_token %}
   {{ form }}
+
+  <div class="wrap">
   <button type="submit">Add Expense</button>
+  </div>
 </form>
+</div>
+
 {% if messages %}
   {% for message in messages %}
     {{ message }}
   {% endfor %}
 {% endif %}
-
-
-
+{% endblock content%}
+</section>

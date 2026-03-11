@@ -1,8 +1,10 @@
+{% extends "expense/header.html" %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+
 {% block content %}
-<header style="background-color: aqua;">
-<img  src="{{ user.profile.profile_photo.url }}" alt="Image" height="50px" width="50px">
-<h4 >{{user.profile.name}} </h4> 
-</header>
+
 <form method="POST" enctype="multipart/form-data"   >
 	{% csrf_token %}
 	<h2>Profile Update</h2>

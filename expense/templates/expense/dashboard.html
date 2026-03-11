@@ -1,14 +1,14 @@
-{% if user.is_authenticated %}
-<header style="background-color: aqua;">
-<img  src="{{ user.profile.profile_photo.url }}" alt="Image" height="50px" width="50px">
-<h4 >{{user.profile.name}} </h4> 
-</header>
+{% extends "expense/header.html" %}
+
+{%block content%}
+
 <p>Hello, {{user.email}} </p> 
 
 <form action="{% url 'expense:logout' %}" method="post">
   {% csrf_token %}
   <button type="submit">Log Out</button>
 </form>
+<section class="dashbaord">
 <P> {{current_month_name}}'s Total Expense</P>
 
 <table border="1px">
@@ -50,18 +50,5 @@
     </tr>
     {% endfor %}
 </table>
-
-<p>
-  <a href="{% url 'expense:category' %}">Category</a>
-</p>
-<p>
-  <a href="{% url 'expense:profile' %}">Update Profile</a>
-</p>
-<p>
-  <a href="{% url 'expense:add_expense' %}">Add expense</a>
-</p>
-<p>     
-    <a href="{% url 'expense:all_expense' %}">View Expenses</a>
-</p>
-<a href="{% url 'expense:password_change' %}">Change Password</a>
-{% endif %}
+</section>
+{% endblock content%}

@@ -12,7 +12,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import generate_token
 from django.shortcuts import render, get_object_or_404,redirect
-from django.views import generic, View
+from django.views import View
+from django.views.generic.edit import UpdateView
 from django.core.mail import EmailMessage
 from .forms import CustomUserCreationForm, ProfileForm, CategoryForm, ExpenseForm
 from .models import User, Profile, Category, Expense
@@ -227,7 +228,7 @@ class AddExpenseView(View):
             messages.error(request, "Please confirm your categories before adding expenses.")
             return redirect('expense:category')
         form = ExpenseForm(user=request.user)
-        print(form)
+        # print(form)
         context = self.get_daily_context(request.user)
         context['form'] = form
         return render(request, self.template_name, context)
@@ -247,9 +248,19 @@ class AddExpenseView(View):
             
         context = self.get_daily_context(request.user)
         context['form'] = form
-        
         return render(request, self.template_name, context)
-    
+
+class UpdateExpenseView(UpdateView):
+    model = Expense
+    form_class = ExpenseForm
+    template_name = 'expense/update_expense.html'
+    success_url = reverse_lazy('expense:all_expense') 
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
 class ExpenseView(View):
     template_name = 'expense/expenses.html'
 
@@ -262,12 +273,8 @@ class ExpenseView(View):
         filtered_startdate = request.GET.get("startdate")
         filtered_enddate = request.GET.get("enddate")
 
-        print(filtered_category)
-        print(filtered_transaction_medium)
-        print(filtered_startdate)
-        print(filtered_enddate)
-        
-        transactions = Expense.objects.filter(user=request.user).order_by('-date')
+    
+        transactions = Expense.objects.filter(user=request.user).order_by('-date')   
         if filtered_category:
             transactions = transactions.filter(category = filtered_category)
         if filtered_transaction_medium:
@@ -276,9 +283,11 @@ class ExpenseView(View):
             transactions = transactions.filter(date__gte = filtered_startdate)
         if filtered_enddate:
             transactions = transactions.filter(date__lte = filtered_enddate)
+        
         print(transactions)
+        
         context = {
             'transactions': transactions,
             'categories' : categories,
-        }       
+        }
         return render(request, self.template_name, context)

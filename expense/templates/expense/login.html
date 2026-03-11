@@ -1,16 +1,21 @@
-
-<h2>Log In</h2>
-<form method="post">
+{% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+<div class="main">
+  <h1>Personal Expense Tracker</h1>
+  <h3>Log In</h3>
+<form class="card" method="post">
+  
   {% csrf_token %}
-  {{ form }}
+  {{ form.as_p }}
+    <div class="wrap">
   <button type="submit">Log In</button>
+  </div>
 </form>
-<a href="{% url 'expense:password_reset' %}"><i>Forgot Password?</i></a>
+<a href="{% url 'expense:password_reset' %}">Forgot Password?</a>
+  <a href="{% url 'expense:register' %}">Register</a>
+</div>
 {% if messages %}
   {% for message in messages %}
     {{ message }}
   {% endfor %}
 {% endif %}
-<p>
-    <a href="{% url 'expense:register' %}">Register</a>
-</p>
