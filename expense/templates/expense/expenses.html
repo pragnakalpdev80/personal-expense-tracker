@@ -1,11 +1,9 @@
 {% extends "expense/header.html" %}
 {%block content%}
 {% if user.is_authenticated %}
-
-<p>     
-    <a href="{% url 'expense:dashboard' %}">Dashboard</a>
-</p>
-
+{% load static %}
+<link rel="stylesheet" href="{% static 'expense.css' %}">
+<div class="container">
 <div class="filter">
     <form method="GET">
         <label>Filter by Category:</label>
@@ -32,11 +30,16 @@
         <label>End Date:</label>
         <input name="enddate" type="date"><br><br>
         
-        <button type="submit">Filter</button>
-        <a href="{% url 'expense:all_expense' %}">Clear</a>
+        <button type="submit" class="filter-btn">Filter</button>
+        <a href="{% url 'expense:all_expense' %}"><button type="button" class="filter-btn">Clear</button></a>
     </form>
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
 </div>
-
+<div class="expense-table all-exp">
 <table border="1px">
     <tr>
         <th>Amount</th>
@@ -61,5 +64,7 @@
     </tr>
     {% endfor %}
 </table>
+</div>
+</div>
 {% endif %}
 {% endblock content%}

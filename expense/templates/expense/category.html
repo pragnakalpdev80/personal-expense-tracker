@@ -2,14 +2,9 @@
 {%block content%}
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'styles.css' %}">
+<link rel="stylesheet" href="{% static 'expense.css' %}">
 
 <h1>Category Management</h1>
-<form method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="confirm" value="confirm">
-    <button type="submit">Confirm Category</button>
-</form>
 {% if messages %}
     <ul>
         {% for message in messages %}
@@ -18,22 +13,25 @@
     </ul>
 {% endif %}
 
-<hr>
+<div class="box cat-box filter">
 
 <h2>Add New Category</h2>
 <form method="POST">
     {% csrf_token %}
     
     <input type="hidden" name="action" value="create">
-    
-    <label>Category Name:</label>
+    Category Name:  
     <input type="text" name="name" required>
-    
     <button type="submit">Create</button>
+
 </form>
-
-<hr>
-
+<form method="POST">
+    {% csrf_token %}    
+    <input type="hidden" name="confirm" value="confirm">
+    <button type="submit">Confirm Category</button>
+</form>
+</div>
+<div class="box cat-box">
 <h2>Your Categories</h2>
 <table>
     <tr>
@@ -42,8 +40,7 @@
     </tr>
     
     {% for category in categories %}
-    <tr>
-        
+    <tr>  
         <td>
             <form method="POST">
                 {% csrf_token %}
@@ -63,7 +60,7 @@
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="category_id" value="{{ category.id }}">
                 
-                <button type="submit">Delete</button>
+                <button class="dlt" type="submit">Delete</button>
             </form>
         </td>
         
@@ -75,4 +72,5 @@
     </tr>
     {% endfor %}
 </table>
+</div>
 {% endblock content%}

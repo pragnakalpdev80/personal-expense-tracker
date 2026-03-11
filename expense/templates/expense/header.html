@@ -2,19 +2,20 @@
 <link rel="stylesheet" href="{% static 'header.css' %}">
 
 <header>
-<div class="topnav">
-    <div class="logo">
-    <img  src="{{ user.profile.profile_photo.url }}" alt="Image">
-        
-    </div>
+    <div class="topnav">
+        <div class="logo">
+            <form action="{% url 'expense:logout' %}" method="post">
+            {% csrf_token %}
+            <!-- <button type="submit">Log Out</button> -->
+            </form>
+            <img  src="{{ user.profile.profile_photo.url }}" alt="Image">
+        </div>
         <a href="{% url 'expense:dashboard' %}">Dashboard</a>
         <a href="{% url 'expense:category' %}">Category</a>
-        <a href="{% url 'expense:profile' %}">Update Profile</a>
+        <a href="{% url 'expense:profile' %}">View Profile</a>
         <a href="{% url 'expense:add_expense' %}">Add expense</a>  
-        <a href="{% url 'expense:all_expense' %}">View Expenses</a>
-        <a href="{% url 'expense:password_change' %}">Change Password</a>
-</div>
-
+        <a href="{% url 'expense:all_expense' %}">View Expenses</a>    
+    </div>
 </header>
 {%block content%}
 {% endblock content%}

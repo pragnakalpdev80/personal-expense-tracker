@@ -1,22 +1,20 @@
 {% extends "expense/header.html" %}
 
-{% load static %}
-<link rel="stylesheet" href="{% static 'styles.css' %}">
-
 {% block content %}
-
+{% load static %}
+<link rel="stylesheet" href="{% static 'expense.css' %}">
+<div class="container">
 <form method="POST" enctype="multipart/form-data"   >
 	{% csrf_token %}
 	<h2>Profile Update</h2>
-	{{ form.as_p }}		
-	<input type="submit" value="Update" />
+	{{ form.as_p }}
+	<button type="submit">Update</button>
 </form>
 {% if messages %}
   {% for message in messages %}
     {{ message }}
   {% endfor %}
 {% endif %}
-	<p>
-        <a href="{% url 'expense:dashboard' %}">dashbaord</a>
-    </p>
+<a href="{% url 'expense:password_change' %}">Change Password</a>
+</div>
 {% endblock content%}

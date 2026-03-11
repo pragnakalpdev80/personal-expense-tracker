@@ -1,14 +1,13 @@
 {% extends "expense/header.html" %}
 
 {%block content%}
-
+{% load static %}
+<link rel="stylesheet" href="{% static 'expense.css' %}">
 <p>Hello, {{user.email}} </p> 
+</div>
 
-<form action="{% url 'expense:logout' %}" method="post">
-  {% csrf_token %}
-  <button type="submit">Log Out</button>
-</form>
-<section class="dashbaord">
+
+<div class="expense-table category-db">
 <P> {{current_month_name}}'s Total Expense</P>
 
 <table border="1px">
@@ -27,6 +26,8 @@
         <th>{{total_monthly}}</th>
     </tr>
 </table>
+</div>
+<div class="expense-table expense-db ">
 <P> Recent Transaction</P>
 <table border="1px">
     <tr>
@@ -50,5 +51,6 @@
     </tr>
     {% endfor %}
 </table>
-</section>
+</div>
+</div>
 {% endblock content%}

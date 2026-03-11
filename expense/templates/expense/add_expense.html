@@ -3,11 +3,28 @@
 
 {% load static %}
 <link rel="stylesheet" href="{% static 'expense.css' %}">
-{% if user.profile.category_confirmed %}
-{% else %}
-<P>PLEASE CONFIRM CATEGORIES FIRST</P>
+
+<div class="box expense-add">
+<div class="main">
+<h2>Add New Expense</h2>
+<form class="card" method="post">
+  {% csrf_token %}
+  {{ form }}
+ {% if messages %}
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
 {% endif %}
-<P> Today's Total Category Wise</P>
+  <div class="wrap">
+  <button type="submit">Add Expense</button>
+ 
+  </div>
+</form>
+</div>
+</div>
+</div>
+
+<div class="expense-table category">
 <table border="1px">
     <tr>
         <th>Category</th>
@@ -24,9 +41,8 @@
         <th>{{total_today}}</th>
     </tr>
 </table>
-<section>
-
-<div class="expense-table">
+</div>
+<div class="expense-table expense ">
 <table border="1px">
         <tr>
             <th>Amount</th>
@@ -44,22 +60,4 @@
         {% endfor %}
     </table>
 </div>
-<div class="main">
-<h2>Add New Expense</h2>
-<form class="card" method="post">
-  {% csrf_token %}
-  {{ form }}
-
-  <div class="wrap">
-  <button type="submit">Add Expense</button>
-  </div>
-</form>
-</div>
-
-{% if messages %}
-  {% for message in messages %}
-    {{ message }}
-  {% endfor %}
-{% endif %}
 {% endblock content%}
-</section>

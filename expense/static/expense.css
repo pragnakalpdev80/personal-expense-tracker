@@ -1,13 +1,13 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-    display: flex;
-    justify-content: center;
     font-family: sans-serif;
     line-height: 1.5;
-    min-height: 100vh;
     background: #f3f3f3;
-    flex-direction: column;
     margin: 0;
-    margin-top: 55px;;
+    margin-top: 70px;;
 }
 
 .main {
@@ -17,12 +17,69 @@ body {
     padding: 10px 20px;
     justify-content: right;
     transition: transform 0.2s;
-    width: 500px;
     text-align: center;
 }
 
-section{
-    display: flex;
+.container {
+    max-width: 90vw;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.box, .expense-table{
+    float: left;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.cat-box{
+    width: 50%;
+}
+
+.expense-table-view{
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+p{
+    margin-left: 5vw;
+}
+
+.all-exp{
+    float:none;  
+}
+
+.all-exp th, .all-exp td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table{
+    width: 100%;
+}
+
+.expense-add{
+    width: 35%;
+}
+
+.expense{
+    width: 45%;
+}
+
+.category{
+    width: 20%;
+}
+
+.expense-db{
+    width: 65%;
+}
+
+.category-db{
+    width: 35%;
 }
 
 h1 {
@@ -39,7 +96,7 @@ label {
     font-weight: bold;
 }
 
-input {
+input, select, textarea {
     display: block;
     width: 100%;
     margin-bottom: 15px;
@@ -47,6 +104,10 @@ input {
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+textarea{
+    max-height: 10%;
 }
 
 button {
@@ -68,7 +129,9 @@ button {
     align-items: center;
 }
 
-
+button{
+    width: 7vw;
+}
 
 .expense-table table {
     border-collapse: collapse;
@@ -83,4 +146,35 @@ button {
 
 .expense-table th {
     background-color: #f8f8f8;
+}
+
+.filter form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter form input, .filter form select, .filter form button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filter-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+.dlt{
+    background-color: red;
+}
+
+.dlt:hover{
+    background-color: rgb(204, 13, 13);
 }

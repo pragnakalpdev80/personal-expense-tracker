@@ -1,5 +1,8 @@
 {% extends "expense/header.html" %}
 {%block content%}
+{% load static %}
+<link rel="stylesheet" href="{% static 'expense.css' %}">
+    <div class="container">
 
     <h2>Edit Expense</h2>
     
@@ -8,6 +11,7 @@
         {{ form.as_p }}
         <br>
         <button type="submit">Save Changes</button>
-        <a href="{% url 'expense:all_expense' %}">Cancel</a>
+        <a href="{% url 'expense:all_expense' %}"><button class="dlt" type="button">Cancel</button></a>
     </form>
+    </div>
 {% endblock content%}
