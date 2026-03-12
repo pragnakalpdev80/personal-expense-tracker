@@ -118,13 +118,35 @@ class DashboardView(View):
 
         total_monthly = monthly_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
         category_totals = monthly_expenses.values('category__name').annotate(total=Sum('amount')).order_by('-total')
-        recent_transactions = Expense.objects.filter(user=request.user).order_by('-date')
+        # recent_transactions = Expense.objects.filter(user=request.user).order_by('-date')
+
+        categories =  Category.objects.filter(Q(user=request.user) | Q(is_default=True))
+        filtered_category  = request.GET.get("category")
+        filtered_transaction_medium  = request.GET.get("transaction_medium")
+        filtered_startdate = request.GET.get("startdate")
+        filtered_enddate = request.GET.get("enddate")
+
+        if filtered_enddate != None: 
+            if filtered_enddate < filtered_startdate:
+                messages.error(request,"please enter valid end date.")
+    
+        transactions = Expense.objects.filter(user=request.user).order_by('-date')   
+        if filtered_category:
+            transactions = transactions.filter(category = filtered_category)
+        if filtered_transaction_medium:
+            transactions = transactions.filter(transaction_medium = filtered_transaction_medium)
+        if filtered_startdate:
+            transactions = transactions.filter(date__gte = filtered_startdate)
+        if filtered_enddate:
+            transactions = transactions.filter(date__lte = filtered_enddate)
+        
 
         context = {
             'total_monthly': total_monthly,
             'category_totals': category_totals,
-            'recent_transactions': recent_transactions,
+            'recent_transactions': transactions,
             'current_month_name': today.strftime("%B"),
+            'categories' : categories,
         }
         return render(request, self.template_name, context)
 

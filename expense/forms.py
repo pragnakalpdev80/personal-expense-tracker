@@ -17,7 +17,11 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('email', 'password1', 'password2')
-
+        help_texts = {
+            'username': None,
+            'email': None,
+        }
+        
     # def save(self, commit=True):
     #     user = super(CustomUserCreationForm, self).save(commit=False)
     #     user.email = self.cleaned_data['email']

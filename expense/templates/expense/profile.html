@@ -15,6 +15,10 @@
     {{ message }}
   {% endfor %}
 {% endif %}
-<a href="{% url 'expense:password_change' %}">Change Password</a>
+<a href="{% url 'expense:password_change' %}"><button type="button">Change Password</button></a>
+ <form action="{% url 'expense:logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+            </form>
 </div>
 {% endblock content%}

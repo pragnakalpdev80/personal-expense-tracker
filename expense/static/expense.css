@@ -5,7 +5,7 @@
 body {
     font-family: sans-serif;
     line-height: 1.5;
-    background: #f3f3f3;
+    background: #f0f4f0;
     margin: 0;
     margin-top: 70px;;
 }
@@ -13,7 +13,7 @@ body {
 .main {
     background-color: #fff;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 24px rgba(76, 175, 80, 0.12);
     padding: 10px 20px;
     justify-content: right;
     transition: transform 0.2s;
@@ -25,7 +25,7 @@ body {
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 16px rgba(76, 175, 80, 0.10);
     border-radius: 8px;
 }
 
@@ -102,8 +102,9 @@ input, select, textarea {
     margin-bottom: 15px;
     padding: 10px;
     box-sizing: border-box;
-    border: 1px solid #ddd;
+    border: 1px solid #c8e6c9;
     border-radius: 5px;
+    background-color: #f9fdf9;
 }
 
 textarea{
@@ -145,7 +146,8 @@ button{
 }
 
 .expense-table th {
-    background-color: #f8f8f8;
+    background-color: #f1f8f1;
+    color: #2e7d32;
 }
 
 .filter form {
@@ -161,20 +163,20 @@ button{
 }
 
 .filter-btn {
-    background-color: #28a745;
+    background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 form button:hover {
-    background-color: #218838;
+    background-color: #388E3C;
 }
 
 .dlt{
-    background-color: red;
+    background-color: #e53935;
 }
 
 .dlt:hover{
-    background-color: rgb(204, 13, 13);
+    background-color: #b71c1c;
 }

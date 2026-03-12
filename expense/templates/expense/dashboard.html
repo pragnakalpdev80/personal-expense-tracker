@@ -3,12 +3,11 @@
 {%block content%}
 {% load static %}
 <link rel="stylesheet" href="{% static 'expense.css' %}">
-<p>Hello, {{user.email}} </p> 
-</div>
+<p style="padding: 16px 24px; font-weight:bold; font-size:15px; color:#333;">Hello, {{user.email}} </p> 
 
 
-<div class="expense-table category-db">
-<P> {{current_month_name}}'s Total Expense</P>
+<div class="expense-table category-db" style="padding:16px;">
+<p style="font-weight:bold; font-size:15px; color:#2e7d32; margin-left:0; margin-bottom:10px;"> {{current_month_name}}'s Total Expense</p>
 
 <table border="1px">
     <tr>
@@ -27,8 +26,44 @@
     </tr>
 </table>
 </div>
-<div class="expense-table expense-db ">
-<P> Recent Transaction</P>
+<div class="expense-table expense-db" style="padding:16px;">
+<p style="font-weight:bold; font-size:15px; color:#2e7d32; margin-left:0; margin-bottom:10px;"> Recent Transaction</p>
+<div class="filter">
+    <form method="GET">
+        <label>Filter by Category:</label>
+        <select name="category">
+            <option value="" selected>All</option>
+            {% for category in categories %}
+            <option value="{{category.id}}">{{category}}</option>
+            {% endfor %}
+        </select>
+        
+        <label>Transaction medium:</label>
+        <select name="transaction_medium">
+            <option value="" selected>All</option>
+            <option value="UPI">UPI</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Net Banking">Net Banking</option>
+            <option value="Cash">Cash</option>
+            <option value="Other">Other</option>
+        </select>
+        
+        <label>Start Date:</label>
+        <input name="startdate" type="date"><br><br>
+        
+        <label>End Date:</label>
+        <input name="enddate" type="date"><br><br>
+        
+        <button type="submit" class="filter-btn">Filter</button>
+        <a href="{% url 'expense:all_expense' %}"><button type="button" class="filter-btn">Clear</button></a>
+    </form>
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
+</div>
+
 <table border="1px">
     <tr>
         <th>Amount</th>
@@ -51,6 +86,5 @@
     </tr>
     {% endfor %}
 </table>
-</div>
 </div>
 {% endblock content%}

@@ -4,10 +4,7 @@
 <header>
     <div class="topnav">
         <div class="logo">
-            <form action="{% url 'expense:logout' %}" method="post">
-            {% csrf_token %}
-            <!-- <button type="submit">Log Out</button> -->
-            </form>
+           
             <img  src="{{ user.profile.profile_photo.url }}" alt="Image">
         </div>
         <a href="{% url 'expense:dashboard' %}">Dashboard</a>

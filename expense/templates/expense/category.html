@@ -16,19 +16,19 @@
 <div class="box cat-box filter">
 
 <h2>Add New Category</h2>
-<form method="POST">
+<form method="POST" style="display:flex; align-items:center; gap:10px;">
     {% csrf_token %}
     
     <input type="hidden" name="action" value="create">
     Category Name:  
-    <input type="text" name="name" required>
-    <button type="submit">Create</button>
+    <input type="text" name="name" required style="margin:0; flex:1; width:auto;">
+    <button type="submit" style="width:auto; padding:10px 18px; margin:0;">Create</button>
 
 </form>
 <form method="POST">
     {% csrf_token %}    
     <input type="hidden" name="confirm" value="confirm">
-    <button type="submit">Confirm Category</button>
+    <button type="submit" style="width:auto; padding:10px 18px;">Confirm Category</button>
 </form>
 </div>
 <div class="box cat-box">
@@ -42,15 +42,15 @@
     {% for category in categories %}
     <tr>  
         <td>
-            <form method="POST">
+            <form method="POST" style="display:flex; align-items:center; gap:8px;">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="update">
                 
                 <input type="hidden" name="category_id" value="{{ category.id }}">
                 
-                <input type="text" name="name" value="{{ category.name }}" required>
+                <input type="text" name="name" value="{{ category.name }}" required style="margin:0; flex:1; width:auto;">
                 
-                <button type="submit">Update</button>
+                <button type="submit" style="width:auto; padding:8px 14px; margin:0; font-size:13px;">Update</button>
             </form>
         </td>
         
@@ -60,7 +60,7 @@
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="category_id" value="{{ category.id }}">
                 
-                <button class="dlt" type="submit">Delete</button>
+                <button class="dlt" type="submit" style="width:auto; padding:8px 14px; margin:0; font-size:13px;">Delete</button>
             </form>
         </td>
         
