@@ -2,8 +2,8 @@ import datetime
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.db.models import Sum , Q  
-from django.contrib.auth.views import LoginView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,PasswordResetCompleteView, PasswordChangeView
+from django.db.models import Sum  
+from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,PasswordResetCompleteView, PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import login,logout
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,13 +12,13 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import generate_token
 from django.shortcuts import render, get_object_or_404,redirect
-from django.views import View
+from django.views.generic import TemplateView, FormView
 from django.views.generic.edit import UpdateView
 from django.core.mail import EmailMessage
 from .forms import CustomUserCreationForm, ProfileForm, CategoryForm, ExpenseForm
-from .models import User, Profile, Category, Expense
+from .models import User, Profile, Category, Expense, DefaultCategory
 # Create your models here.
-class RegistrationView(View):
+class RegistrationView(FormView):
     def get(self, request):
         if request.user.is_authenticated:
             return redirect("/expense/dashboard")
@@ -69,7 +69,7 @@ def activate(request, uidb64, token):
 class LoginView(LoginView):
     template_name = 'expense/login.html'
 
-class LogoutView(View):
+class LogoutView(LogoutView):
     def post(self,request):
         if request.user.is_authenticated:
             logout(request)
@@ -100,7 +100,7 @@ class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     success_message = "Successfully Changed Your Password"
     success_url = reverse_lazy('expense:dashboard')
 
-class DashboardView(View):
+class DashboardView(TemplateView):
     model = Profile
     template_name = 'expense/dashboard.html'
     context_object_name = 'profile'
@@ -120,7 +120,7 @@ class DashboardView(View):
         category_totals = monthly_expenses.values('category__name').annotate(total=Sum('amount')).order_by('-total')
         # recent_transactions = Expense.objects.filter(user=request.user).order_by('-date')
 
-        categories =  Category.objects.filter(Q(user=request.user) | Q(is_default=True))
+        categories =  Category.objects.filter(user=request.user)
         filtered_category  = request.GET.get("category")
         filtered_transaction_medium  = request.GET.get("transaction_medium")
         filtered_startdate = request.GET.get("startdate")
@@ -153,7 +153,7 @@ class DashboardView(View):
     def get_object(self):
         return Profile.objects.get(id=self.kwargs.get("id"))
 
-class ProfileView(View):
+class ProfileView(FormView):
     profile = Profile.objects.all()
 
     def get(self, request):
@@ -169,7 +169,7 @@ class ProfileView(View):
             form.save()
             return redirect('expense:dashboard')
         
-class CategoryView(View):
+class CategoryView(TemplateView):
     template_name = 'expense/category.html'
 
     def get(self, request):
@@ -187,6 +187,13 @@ class CategoryView(View):
         if confirm:
             user = get_object_or_404(Profile, user_id=request.user.id)
             user.category_confirmed = True
+            default_categories = DefaultCategory.objects.all()
+            for default_category in default_categories:
+                Category.objects.create(
+                    user = request.user,
+                    name = default_category.name,
+                    is_default = True
+                )
             user.save()
 
         if action == 'create':
@@ -223,7 +230,7 @@ class CategoryView(View):
 
         return redirect('expense:category')
 
-class AddExpenseView(View):
+class AddExpenseView(FormView):
     template_name = 'expense/add_expense.html'
 
     def get_daily_context(self, user):
@@ -273,7 +280,7 @@ class AddExpenseView(View):
         context['form'] = form
         return render(request, self.template_name, context)
 
-class UpdateExpenseView(UpdateView):
+class UpdateExpenseView(FormView):
     model = Expense
     form_class = ExpenseForm
     template_name = 'expense/update_expense.html'
@@ -284,13 +291,13 @@ class UpdateExpenseView(UpdateView):
         kwargs['user'] = self.request.user
         return kwargs
 
-class ExpenseView(View):
+class ExpenseView(TemplateView):
     template_name = 'expense/expenses.html'
 
     def get(self, request):
         if not request.user.is_authenticated:
             return redirect("/expense/login")
-        categories =  Category.objects.filter(Q(user=request.user) | Q(is_default=True))
+        categories =  Category.objects.filter(user=request.user)
         filtered_category  = request.GET.get("category")
         filtered_transaction_medium  = request.GET.get("transaction_medium")
         filtered_startdate = request.GET.get("startdate")
