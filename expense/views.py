@@ -15,7 +15,7 @@ from django.views.generic import TemplateView, FormView
 from django.views.generic.edit import UpdateView
 from .forms import CustomUserCreationForm, ProfileForm, ExpenseForm
 from .models import User, Profile, Category, Expense, DefaultCategory
-from .tasks import send_activation_mail
+from .tasks import send_activation_mail, send_welcome_mail
 # Create your models here.
 class RegistrationView(FormView):
     def get(self, request):
@@ -32,6 +32,7 @@ class RegistrationView(FormView):
             user.save()
             Profile.objects.create(user=user)
             current_site = get_current_site(request)
+            send_welcome_mail(user)
             send_activation_mail(user,current_site)
             form.save()
             return redirect('/expense/login/')    
