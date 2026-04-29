@@ -7,16 +7,15 @@ from django.contrib.auth.views import LoginView,LogoutView,PasswordResetView, Pa
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import login,logout
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from .tokens import generate_token
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views.generic import TemplateView, FormView
 from django.views.generic.edit import UpdateView
-from django.core.mail import EmailMessage
-from .forms import CustomUserCreationForm, ProfileForm, CategoryForm, ExpenseForm
+from .forms import CustomUserCreationForm, ProfileForm, ExpenseForm
 from .models import User, Profile, Category, Expense, DefaultCategory
+from .tasks import send_activation_mail
 # Create your models here.
 class RegistrationView(FormView):
     def get(self, request):
@@ -33,18 +32,7 @@ class RegistrationView(FormView):
             user.save()
             Profile.objects.create(user=user)
             current_site = get_current_site(request)
-            mail_subject = 'Activate your Expense Tracker account'
-            message = render_to_string('active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                'token':generate_token.make_token(user),
-            })
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(
-                        mail_subject, message, to=[to_email]
-            )
-            email.send()
+            send_activation_mail(user,current_site)
             form.save()
             return redirect('/expense/login/')    
         else:   
@@ -258,7 +246,6 @@ class AddExpenseView(FormView):
             messages.error(request, "Please confirm your categories before adding expenses.")
             return redirect('expense:category')
         form = ExpenseForm(user=request.user)
-        # print(form)
         context = self.get_daily_context(request.user)
         context['form'] = form
         return render(request, self.template_name, context)
@@ -317,7 +304,6 @@ class ExpenseView(TemplateView):
         if filtered_enddate:
             transactions = transactions.filter(date__lte = filtered_enddate)
         
-        # print(transactions)
         
         context = {
             'transactions': transactions,
